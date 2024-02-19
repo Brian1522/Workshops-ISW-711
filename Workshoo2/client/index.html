@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Week 1 - Consume API</title>
+  <script>
+    const completed = (resonse) => {
+      const data = JSON.parse(response.target.responseText);
+      document.getElementById('result').innerHTML = `Tipo de Cambio Dolares ${data.TipoCompraDolares}`;
+    };
+
+    const error = () => console.log(this.responseText);
+
+    function getExchange() {
+      //countrySelected()
+      getCountryData()
+
+    }
+
+    function getCountryData() {
+      const selectedCountryCode = document.getElementById('countries').value;
+      if (selectedCountryCode) {
+        const ajaxRequest = new XMLHttpRequest(); //AJAX
+        ajaxRequest.addEventListener("load", (e) => {
+          const currenciesObject = JSON.parse(ajaxRequest.responseText);
+          const exchangeRate = currenciesObject[selectedCountryCode.toLowerCase()];
+          console.log(exchangeRate.usd);
+          document.getElementById('result').innerHTML = `Tipo de Cambio a Dolar: ${exchangeRate.usd}`;
+
+        });
+        ajaxRequest.addEventListener("error", () => { });
+        ajaxRequest.open("GET", `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${selectedCountryCode.toLowerCase()}.json`);
+        ajaxRequest.send();
+      }
+    }
+
+    function countrySelected() {
+      
+      // se agrega el codigo de ejecucion
+      const country = document.getElementById('countries').value
+      console.log("País seleccionado:", country);
+    }
+
+
+  </script>
+</head>
+
+<body>
+  <button onclick="getExchange()">Tipo de Cambio</button>
+  <h3>Results:</h3>
+  <div id="result"></div>
+
+  <select name="countries" id="countries" onchange="getExchange()">
+  </select>
+
+  <script>
+    function guardarjson(nombre, iniciales) {
+      const datos = {
+        "name": nombre,
+        "age": iniciales
+      };
+
+      const datosJASON = JSON.stringify(datos);
+      console.log(datosJASON);
+
+    };
+
+    const datos = {};
+
+    function agregarDato(nombre, edad) {
+      datos[nombre] = {
+        "Name": nombre,
+        "Currency": edad
+      };
+    }
+
+
+
+    const ajaxRequest = new XMLHttpRequest(); //AJAX
+    ajaxRequest.addEventListener("load", (e) => {
+
+      const countriesObject = JSON.parse(e.target.responseText);
+      const countriesArray = Object.values(countriesObject);
+
+      let optionsHtml = "";
+      countriesArray.forEach(country => {
+
+        optionsHtml += `<option value="${country.Currency}">${country.Name}</option>`;
+
+      
+      });
+      document.getElementById("countries").innerHTML = optionsHtml;
+
+    });
+    ajaxRequest.addEventListener("error", () => { });
+    ajaxRequest.open("GET", "http://localhost:3001/listcountri");
+    ajaxRequest.send();
+
+
+
+  </script>
+</body>
+
+</html>
